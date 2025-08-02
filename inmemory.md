@@ -1,7 +1,9 @@
 ---
 marp: true
 theme: default
-size: 4:3
+size: 4K
+auto-scaling: true
+paginate: true
 ---
 
 # Oracle In-Memory: basics and beyond
@@ -30,7 +32,7 @@ Cache-aware algorithms and programming styles give better performance. -->
 
 ---
 
-![](ex/mem_hierarchy.png)
+![bg w:auto h:auto](ex/mem_hierarchy.png)
 
 <!--
 Adapted from Bryant & Hallaron, "Computer Systems: A Programmer's Perspective"
@@ -90,15 +92,184 @@ Pola.rs (written in Rust, adds SQL support and other cool features)
 
 ---
 
+---
+# Oracle In-Memory
+In-memory column store
+Query optimizations
+Availability and automation
+Integration with the Oracle features
+
+---
+# Oracle In-memory Base Level
+
+Oracle EE feature
+IM colun store size less than 16GB per instance
+Compression level is set to `QUERY LOW`
+No Automatic In-Memory
+
+---
 # Oracle In-memory and competitors
 
 ||Arrow implementations|Oracle In-Memory|
 |---|---|---|
 |Data types |Has own type system|Subset of Oracle SQL types|
 |Access|Constant time random access|Through SQL queries|
+|Transactional|No|Yes|
 |Compute functions| Yes | Through In-Memory expressions|
 |Automatic parallelization|Yes|Yes|
 |Automatic memory management|Not really/depends|Yes|
 
+---
 
+# Under the Hood
+
+---
+
+![bg w:auto h:auto](img/imcu3.png)
+
+<!--
+In-Memory compression unit (IMCU) contains Compression Units with the column data (from
+one or more columns), and the header. IMCU header contains various metadata, and might
+contain IM storage index. IMCU stores data from one and only object. IMCU includes all
+the columns from the table.
+
+Columns in IMCU are not sorted, IMCUs are populated in the order data is read from the
+disk. IMCU allocates space in contiguous 1M pieces (extents)
+
+Column Compression Units (CU) is continuous storage for a single column. CU has a body
+and a header. Header contains metadata about the values stored in CU (min and max values
+stored). It may contain local dictionary (for dictionary encoding?) The CU stores values
+in ROWID order.
+
+IMCU contains ROWIDs as well, this is how column values are stitched together. (In case
+of join group, local dictionaries contain references to the common dictionary) 
+
+Snapsot Metadata Unit contains metadata for associated IMCU (1:1). Contains object
+numbers, column numbers, mapping info for columns and transaction journal. When row
+in the buffer cache changes, then database adds modified row(id?) to the SMU and marks
+it stale as of SCN. Recent versions will come from buffer cache.
+
+-->
+---
+
+![bg w:auto h:auto](img/imcu_single.png)
+
+<!--
+In-Memory compression unit (IMCU) contains Compression Units with the column data
+(from one or more columns), and the header. IMCU header contains various metadata,
+and might contain IM storage index. IMCU stores data from one and only object. IMCU
+includes all the columns from the table.
+
+Columns in IMCU are not sorted, IMCUs are populated in the order data is read from the
+disk. IMCU allocates space in contiguous 1M pieces (extents)
+
+Column Compression Units (CU) is continuous storage for a single column. CU has a body
+and a header. Header contains metadata about the values stored in CU (min and max values
+stored). It may contain local dictionary (for dictionary encoding?) The CU stores values
+in ROWID order. IMCU contains ROWIDs as well, this is how column values are stitched
+together. (In case of join group, local dictionaries contain references to the common
+dictionary) 
+
+-->
+---
+
+# Snapshot metadata units
+Every IMCU has a separate SMU
+SMU contains metadata for IMCU (Object and column numbers, mapping for rows)
+SMU contains transaction journal
+
+---
+
+# Transaction journal
+Keeps IMCU transactionally consistent
+In case of a change database adds rowid to the journal and marks it stale as of SCN
+Stale rows are read from buffer cache
+
+---
+
+# In-Memory expression units
+Stores materialized In-Memory expressions and virtual columns
+Logical extension of the parent IMCU
+Maps to the same rowset as IMCU
+
+---
+
+# Expression statistics store
+* Maintained by the optimizer, stores statistics about expression evaluation
+* Part of the data dictionary, used for IM expressions
+* Exposed as DBA_EXPRESSION_STATISTICS view
+
+---
+
+![w:auto h:auto](img/pools.png)
+
+<!-- 
+Screenshot is from 21.13
+Columnar data pool (IMCUs), 1MB pool in V$INMEMORY_AREA
+Metadata pool, 64KB pool in V$INMEMORY_AREA
+“IM pool metadata”, IM POOL METADATA in V$INMEMORY_AREA
+“Metadata pool” stores metadata about the objects that reside in the Im column store. “IM pool metadata” stores other metadata which can’t be stored in metadata pool.
+
+-->
+---
+
+# In-Memory store population and repopulation
+Happens magically
+Tasks are coordinated by In-Memory Coordination Process (IMCO)
+Actual work is done by Space Management Worker Processes (Wnnn)
+
+---
+
+# In-Memory store population
+IMCO triggers population of all segments with priority higher than NONE
+Segments with priority NONE are populated after they’re scanned
+Workers create IMCUs, SMUs, and IMEUs
+
+<!-- 
+IMCO wakes up
+Checks if repopulation od IMCUs is needed
+Triggers Wnnn to do the work
+SMCO sleeps for 2 minutes
+
+-->
+
+---
+# In-Memory store repopulation (I)
+Thresold-based, triggered when # of stale entries in IMCU reaches the threshold
+Thresold is percentage of entries in transaction journal
+Double buffering: new IMCU is created by combining old IMCUs with transaction journals
+
+<!-- 
+During repopulation, old IMCUs remain accessible. IMEUs can be added later, without repopulating the IMCU
+-->
+---
+# In-Memory store repopulation (II)
+`INMEMORY_MAX_POPULATE_SERVERS` -> max number of workers
+`INMEMORY_TRICKLE_REPOPULATE_PERCENT` -> max percent of time workers can do trickle repopulation
+
+---
+# In-Memory dynamic scans (I)
+Uses threads to scan the IMCUs
+Uses idle CPU
+
+![w:auto h:auto](img/parallel.png)
+
+---
+# In-Memory dynamic scans (II)
+
+Enabled when a CPU resource plan is enabled and CPU utilization is low
+`CPU_COUNT` must be `>= 24`
+
+Query is candidate for dynamic scan if 
+   * It access high number of IMCUs or columns
+   * Consumes all rows in the table
+   * Is CPU intensive
+
+---
+
+![w:820 h:640](img/dynamic_scans.png)
+
+<!-- 
+Screenshot is from 19c RAC.
+-->
 ---
