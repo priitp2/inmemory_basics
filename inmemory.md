@@ -273,3 +273,40 @@ Query is candidate for dynamic scan if
 Screenshot is from 19c RAC.
 -->
 ---
+
+# In-Memory joins
+IMCUs encoded with different dictionaries have to be decoded to be joinable
+In-Memory join groups encode different tables with the same dictionary
+
+<!-- 
+TABLE ACCESS IN MEMORY FULL operation in the query plan means that between zero and all the data is read from the IM column store.
+-->
+
+---
+
+# Compression
+Levels from FOR DML to FOR CAPACITY HIGH
+FOR QUERY handles NUMBERs
+
+<!-- 
+Oracle NUMBER data type is a composite data type and thus not especially CPU friendly. FOR QUERY and better compression levels transform it to something more computable.
+
+FOR QUERY LOW seems to be using dictionary encoding only, FOR CAPACITY HIGH uses Zstandard.
+
+-->
+---
+
+# It happens all in runtime
+
+Does TABLE ACCESS IN MEMORY FULL access path mean data comes from the In-Memory?
+
+<!-- 
+Data might be stale. Segments might not be loaded into In-memory, for example in RAC. Or your query might mix and match columns that are not loaded into In-memory: in that case data will come from the buffer cache. And query optimizer is totally oblivious about what decision are taken during the scan.
+-->
+---
+
+![](img/inm_stats.png)
+
+---
+
+# Thank you!
