@@ -53,6 +53,8 @@ Inlines subroutines, avoids deep call hierarchies
 Tight control on memory allocation
 
 <!-- We’re mostly talking about the first point: arrays and other continuous memory regions. This gives better data locality and CPU cache hit ratio.
+
+In context of data analytics, it is not a free lunch. More often than not, data has to be turned into CPU-friendly format and that takes an effort.
 -->
 
 ---
@@ -92,33 +94,65 @@ Pola.rs (written in Rust, adds SQL support and other cool features)
 
 ---
 
----
 # Oracle In-Memory
-In-memory column store
+---
+# Oracle In-Memorya (I)
+In-Memory column store (Ppart of the SGA)
 Query optimizations
 Availability and automation
 Integration with the Oracle features
 
 ---
+
+# Oracle In-Memory (II)
+
+On CDB/instance level:
+   ```sql
+   alter system set inmemory_size = 16G scope = spfile
+   ``` 
+On PDB level:
+   ```sql
+   alter system set inmemory_size = 8G scope = spfile;
+   ```
+<!-- 
+PDBs can share the inmemory area configured on the CDB/instance level
+It is possible to distribute inmemory area between the PDBs
+-->
+---
+
+# Automatic In-Memory sizing in 23ai
+
+Can automatically shrink or grow In-Memory area.
+`inmemory_size` becomes minimum size for In-Memory
+`INMEMORY_LEVEL` should be set to `MEDIUM` or `HIGH` 
+ASMM manages In-Memory Area with other SGA components
+
+<!-- 
+In-Memory Area sizing can be either manual or automatic (in 23ai)
+-->
+---
+
 # Oracle In-memory Base Level
 
 Oracle EE feature
-IM colun store size less than 16GB per instance
+IM column store size less than 16GB per CDB or instance
 Compression level is set to `QUERY LOW`
 No Automatic In-Memory
+```sql
+alter system set inmemory_force = base_level scope = spfile;
+```
 
 ---
 # Oracle In-memory and competitors
-
 ||Arrow implementations|Oracle In-Memory|
 |---|---|---|
-|Data types |Has own type system|Subset of Oracle SQL types|
+|Data types |Has own type system|Subset of SQL types|
 |Access|Constant time random access|Through SQL queries|
 |Transactional|No|Yes|
-|Compute functions| Yes | Through In-Memory expressions|
+|Compute functions| Yes | In-Memory expressions|
 |Automatic parallelization|Yes|Yes|
 |Automatic memory management|Not really/depends|Yes|
-
+|Automatic In-Memory|No|Yes|
 ---
 
 # Under the Hood
