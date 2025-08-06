@@ -155,6 +155,66 @@ alter system set inmemory_force = base_level scope = spfile;
 |Automatic In-Memory|No|Yes|
 ---
 
+# Populating the column store
+
+During the population
+*   Database reads row format data from the disk
+*   Transforms into columnar format
+*   Stores it in the IM column store
+
+---
+
+# Repopulation
+
+Transforms *new* data into columnar format
+Creates new IMCUs
+
+<!--
+IMCUs are read only, so new data is added to the transaction journal and new IMCUs are created during the repopulation.
+-->
+---
+
+# `INMEMORY` attribute can be specified for
+
+Tablespaces
+Tables
+Matrialized views
+Set of columns
+
+```sql
+```
+---
+
+# `INMEMORY` attribute
+
+Objects that can't be populated:
+* Indexes
+* Index-oriented tables
+* Hash clusters
+* Objects owned by SYS
+* Objects in `SYSTEM` or `SYSAUX` tablespaces 
+
+---
+
+# Ineligible data types
+
+Data types that can't be populated:
+* Out-of-line columns like varrays, nested table columns 
+* `LONG` or `LONG RAW` data types
+* Extended data types
+
+---
+
+# In-Memory and LOBs
+
+Out-of-line LOBs can't be populated, IM column store saves only the locator
+
+
+Inline LOBS:
+* IM column store allocates 4KB of continuous buffer space
+* For OSON data upper limit is 32KB
+
+---
 # Under the Hood
 
 ---
