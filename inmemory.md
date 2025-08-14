@@ -24,6 +24,12 @@ Apache Arrow in the free software world. At last, Oracle In-Memory might get com
 -->
 ---
 
+Presentation and scripts available in Github
+![](img/pres_qrcode.png)
+
+
+---
+
 # What makes computation fast?
 
 <!-- Find out what the CPU is doing and do it less.
