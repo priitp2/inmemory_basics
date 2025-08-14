@@ -24,7 +24,7 @@ Apache Arrow in the free software world. At last, Oracle In-Memory might get com
 -->
 ---
 
-Presentation and scripts available in Github
+# Presentation and scripts available in Github
 ![](img/pres_qrcode.png)
 
 
