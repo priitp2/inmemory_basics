@@ -205,6 +205,23 @@ Data types that can't be populated:
 
 ---
 
+# Partitioned tables
+
+In-Memory can be specified either on table level or partition level
+Partitions inherit table-level clause
+Works with hybrid partitioning, but rsults may vary
+
+---
+
+# External tables and external partitions
+
+Some limitations:
+* No subpartitions
+* Column, distribute and priority clauses are not valid
+* No join groups, In-Memory Optimized Arithmetic, In-Memory Expressions
+
+---
+
 # In-Memory and LOBs
 
 Out-of-line LOBs can't be populated, IM column store saves only the locator
