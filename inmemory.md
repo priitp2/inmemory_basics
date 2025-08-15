@@ -238,6 +238,19 @@ Inline LOBS:
 * For OSON data upper limit is 32KB
 
 ---
+
+![](img/syntax0.png)
+
+---
+
+![](img/syntax_memcompress.png)
+
+---
+
+![](img/syntax_priority.png)
+
+---
+
 # Under the Hood
 
 ---
