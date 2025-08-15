@@ -245,9 +245,26 @@ Inline LOBS:
 
 ![](img/syntax_memcompress.png)
 
+<!--
+
+NO MEMCOMPRESS -> no compression.
+MEMCOMPRESS AUTO -> database manages automatically eviction, recompression and population. New in 23ai.
+MEMCOMPRESS FOR DML -> little or no compression, optimized for DML
+QUERY LOW -> default level, should give best query performance
+CAPACITY LOW -> according to documentation gives excellent query performance as well
+
+-->
+
 ---
 
 ![](img/syntax_priority.png)
+
+<!--
+PRIORITY clause controls priority of the population and not speed.
+NONE -> On-demand population, data will be populated only if table is accessed through full table scan. This is default.
+
+With priority LOW .. CRITICAL data is populated through internally managed priority queue. Higer priority segments will get precedence over the lower precedence segments. In case of the lack of space, data is not populated until space is available.
+-->
 
 ---
 
