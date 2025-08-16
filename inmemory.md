@@ -268,6 +268,21 @@ With priority LOW .. CRITICAL data is populated through internally managed prior
 
 ---
 
+![](img/syntax_distribute.png)
+
+<!--
+How data is distributed between RAC nodes:
+AUTO -> larger tables are distributed according to the access patterns. Smaller tables as one chunk. (Default)
+BY ROWID RANGE|PARTITION|SUBPARTITION -> Distribution by rowids, partitions or subpartitions.
+
+Distribution for service:
+DEFAULT -> Object is populated on all instances, except when PARALLEL_INSTANCE_GROUP is set.
+ALL -> Object is distributed on all instances, even if PARALLEL_INSTANCE_GROUP is set.
+service name -> Object is populated on instances where service is deployed.
+NONE -> disables population.
+-->
+---
+
 # Under the Hood
 
 ---
