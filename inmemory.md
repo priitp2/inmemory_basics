@@ -283,6 +283,17 @@ NONE -> disables population.
 -->
 ---
 
+![](img/syntax_duplicate.png)
+
+<!--
+Controls how data is duplicated across the RAC instances.
+NO DUPLICATE -> default
+DUPLICATE -> data is duplicated on two instances.
+DUPLICATE ALL -> data is duplicates on all instances.
+-->
+
+---
+
 # Under the Hood
 
 ---
