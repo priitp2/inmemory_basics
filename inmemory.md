@@ -11,6 +11,16 @@ paginate: true
 ### 14.11.2025
 
 ---
+
+# Whoami: Priit Piipuu
+
+Database performance engineer at FDJ United
+Oracle Ace Pro
+Member of Symposium 42
+Blog: https://priitp.wordpress.com,
+@ppiipuu.bsky.social
+
+---
 # What it's all about
 
 * A gentle introduction to the in-memory analytics
@@ -27,6 +37,13 @@ Apache Arrow in the free software world. At last, Oracle In-Memory might get com
 # Presentation and scripts available in Github
 ![](img/pres_qrcode.png)
 
+---
+
+# Safe harbour statement
+
+This presentation describes things as they are in Oracle 23ai
+It is tested on Oracle 19c and 21c
+You should always read the latest version of In-Memory docs, even if you're on older version
 
 ---
 
