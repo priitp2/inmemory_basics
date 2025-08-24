@@ -499,4 +499,97 @@ Data might be stale. Segments might not be loaded into In-memory, for example in
 
 ---
 
+# In-Memory expressions
+
+Precompute and store computationally expensive expressions
+Created automatically by the database
+Database tracks most active expressions in the capture window
+
+---
+
+# In-Memory virtual columns
+
+Created by the user
+Populated by the IM expressions infrastructure
+
+<!--
+Difference between the In-Memory expressions and virtual columns is that expressions are hidden from the user while IM virtual columns are visible.
+-->
+
+---
+
+# IM expression capture
+
+`DBMS_INMEMORY_ADMIN.IME_CAPTURE_EXPRESSIONS`  identifies 20 hottest expressions in the time range
+Possible time intervals:
+* `CUMULATIVE` -- all expressions since the creation of the database
+* `CURRENT` -- expressions from the past 24h
+* `WINDOW` -- expressions from the last capture window
+
+<!--
+`WINDOW` is the user-defined interval.
+-->
+
+---
+
+# IM expression capture (II)
+
+Captured expressions will become hidden `SYS_IME` columns
+Old expressions will be markes with `NO INMEMORY` attribute
+Table can have max 50 `SYS_IME` columns
+To allow new columns, old columns must be dropped
+
+<!--
+Dtabase queries ESS, and considers only expressions on heap-organized tables that are at least partially populated to IM store.
+
+IME columns can be dropped either with `DBMS_INMEMORY.IME_DROP_EXPRESSIONS` or
+`DBMS_INMEMORY_ADMIN.IME_DROP_ALL_EXPRESSIONS` procedures.
+
+`IME_POPULATE_ESPRESSIONS` poulates the expressions. Otherwise expressions are populated when
+-->
+
+---
+
+# IM expression capture (III)
+
+Expressions are populated
+* When `DBMS_INMEMORY_ADMIN.IME_POPULATE_EXPRESSIONS` is called
+* When parent IMCUs are (re)populated
+
+---
+
+# In-Memory optimized dates
+
+Set the `INMEMORY_OPTIMIZED_DATE` to `ENABLE`
+`DATE` fields will be populated with `MONTH` and `YEAR` IM expressions
+Speeds up `EXTRACT` function
+Available in Oracle 23ai
+
+---
+
+# In-Memory and JSON
+
+Useful for queries that scan large number of small JSON documents
+Supports full-text search for `JSON` data type
+Speeds up SQL/JSON path access
+JSON data in IM column store is stored as OSON
+
+<!--
+Storing JSON in IM column store is more complicated than that. See for example table 7-1 here:
+https://docs.oracle.com/en/database/oracle/oracle-database/23/inmem/optimizing-in-memory-expressions.html
+-->
+---
+
+# In-Memory and JSON: limitations
+
+Limitation: documents should be smaller than 32k
+Parameter `max_string_size` should be set to `extended`
+
+<!--
+If the document is larger than 32k, query accesses the row store.
+`max_string_size` requirement affects JSON persisted in VARCHAR2, CLOB and BLOB columns. This does not affect(?) JSON data type.
+-->
+
+---
+
 # Thank you!
