@@ -592,4 +592,17 @@ If the document is larger than 32k, query accesses the row store.
 
 ---
 
+# In-Memory and JSON: initialization parameters
+
+`INMEMORY_EXPRESSIONS_USAGE` -> `STATIC_ONLY` or `ENABLE`
+`INMEMORY_VIRTUAL_COLUMNS` -> `ENABLE`
+
+<!--
+`INMEMORY_EXPRESSION_USAGE = ENABLE` allows materialization of dynamic expression, `INMEMORY_VIRTUAL_COLUMNS = ENABLE` allows population of all virtual columns. 
+-->
+
+---
+
+---
+
 # Thank you!
