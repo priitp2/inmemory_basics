@@ -56,7 +56,6 @@ Cache-aware algorithms and programming styles give better performance. -->
 ---
 
 ![bg w:auto h:auto](ex/mem_hierarchy.png)
-
 <!--
 Adapted from Bryant & Hallaron, "Computer Systems: A Programmer's Perspective"
 -->
@@ -66,6 +65,19 @@ Adapted from Bryant & Hallaron, "Computer Systems: A Programmer's Perspective"
 
 <!-- Tanel Põder, “RAM is the new disk” series: https://tanelpoder.com/2015/08/09/ram-is-the-new-disk-and-how-to-measure-its-performance-part-1/
 -->
+
+---
+
+| Event | Full table scan | In-Memory scan | Difference |
+|-------|-----------------|----------------|---|
+| branch-instructions | 9700928898 | 716348559 | 13x |
+| branch-misses | 123790427 | 30305893 | 4x |
+| cache-misses | 33121710 | 4641178 |  7x |
+| cycles | 31763298910 | 3322369500 | 9.6x |
+| instructions | 65545341739 | 4178971681 | 15x |
+
+
+> Source: https://priitp.wordpress.com/2024/10/16/does-oracle-in-memory-use-simd-instructions-joelkallmanday/
 
 ---
 # Data-oriented design
@@ -93,13 +105,6 @@ Protocol for serialisation and generic data transport
 -->
 
 ---
-# Apache Arrow (II)
-
-Implementations for specific languages
-
-Dremio: query engine and data warehouse built around Arrow.
-
----
 # Arrow columnar format
 
 Data adjacency for sequential access
@@ -114,13 +119,14 @@ No compression
 C/C++
 Pyarrow (wrapper around the C/C++ library)
 Pola.rs (written in Rust, adds SQL support and other cool features)
+Dremio: query engine and data warehouse built around Arrow.
 
 ---
 
 # Oracle In-Memory
 ---
-# Oracle In-Memorya (I)
-In-Memory column store (Ppart of the SGA)
+# Oracle In-Memory (I)
+In-Memory column store (part of the SGA)
 Query optimizations
 Availability and automation
 Integration with the Oracle features
@@ -464,17 +470,56 @@ Screenshot is from 19c RAC.
 -->
 ---
 
-# In-Memory joins
+# In-Memory joins (I)
+
 IMCUs encoded with different dictionaries have to be decoded to be joinable
 In-Memory join groups encode different tables with the same dictionary
+Eliminates need for decompressing and hashing column values
+External tables not supported!
 
 <!-- 
+
+In-Memory joins can be optimized through Bloom filters. If the Bloom filter isn't appropriate, columns need to be decomressed for the hash join. Join groups eliminate the
+need for the decompression and hashing.
+
 TABLE ACCESS IN MEMORY FULL operation in the query plan means that between zero and all the data is read from the IM column store.
 -->
 
 ---
 
+# In-Memory joins (II)
+
+```
+create inmemory join group cust_trans_jg ( customers ( id ),transactions ( customer_id) );
+```
+Common dictionary is build next time table is (re)populated
+
+
+---
+
+# In-Memory joins (III)
+
+```
+INMTEST> column joingroup_name format A30
+INMTEST> column column_name format A64
+INMTEST> select joingroup_name, table_owner || '.' || table_name || '.' || column_name as column_name, flags, gd_address from user_joingroups;
+
+JOINGROUP_NAME                 COLUMN_NAME                                                           FLAGS GD_ADDRESS
+------------------------------ ---------------------------------------------------------------- ---------- ----------------
+CUST_TRANS_JG                  INMTEST.CUSTOMERS.ID                                                      1 000000043FCFFF20
+CUST_TRANS_JG                  INMTEST.TRANSACTIONS.CUSTOMER_ID                                          1 000000043FCFFF20
+
+```
+
+# In-Memory joins (IV)
+
+Usage is hidden really well
+Easiest to spot in the SQL Monitoring Report
+
+---
+
 # Compression
+
 Levels from FOR DML to FOR CAPACITY HIGH
 FOR QUERY handles NUMBERs
 
