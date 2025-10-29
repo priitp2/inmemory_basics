@@ -511,10 +511,44 @@ CUST_TRANS_JG                  INMTEST.TRANSACTIONS.CUSTOMER_ID                 
 
 ```
 
+---
+
 # In-Memory joins (IV)
 
 Usage is hidden really well
 Easiest to spot in the SQL Monitoring Report
+
+---
+
+# In-Memory and aggregation
+
+Uses arrays for joins and aggregation
+Cost-based, used for `GROUP BY`
+Does not support `GROUP BY ROLLUP`, `GROUPING SETS` and `CUBE` 
+Main benefit: allows vector joins and group by operations while scanning the fact table
+
+---
+
+# KEY VECTOR and VECTOR GROUP BY (I)
+
+`INMEMORY_SIZE` must be set to non-zero value
+Tables do not have to be populated to the IM store (!)
+Transforms join between dimension and fact table into a filter
+Key vectors are conceptually similar to the Bloom filters
+
+---
+
+# KEY VECTOR and VECTOR GROUP BY: some limitations
+
+Does not benefit joins between large tables
+Dimension has more than 2bn rows
+
+---
+
+# KEY VECTOR and VECTOR GROUP BY: some conditions
+
+Query joins the fact table with one or more dimensions
+Multiple fact tables joined by same dimension also supported
 
 ---
 
