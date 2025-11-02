@@ -171,6 +171,11 @@ No Automatic In-Memory
 alter system set inmemory_force = base_level scope = spfile;
 ```
 
+<!--
+Because of VECTOR GROUP BY it might be good to set inmemory_size > 0 even if you do not
+populate any segments to in-memory area.
+-->
+
 ---
 # Oracle In-memory and competitors
 ||Arrow implementations|Oracle In-Memory|
@@ -552,6 +557,32 @@ Multiple fact tables joined by same dimension also supported
 
 ---
 
+![w:auto h:auto](img/junk_data_model.png)
+
+---
+
+```sql
+select c.jurisdiction,
+       p.provider_name,
+       sum(t.amount)
+  from transactions t
+  join customers c
+on t.customer_id = c.id
+  join providers p
+on p.id = t.provider_id
+ group by c.jurisdiction,
+          p.provider_name;
+```
+
+---
+
+![w:auto h:auto](img/hash_group_by0.png)
+
+---
+
+![w:auto h:auto](img/vector_group_by1.png)
+
+---
 # Compression
 
 Levels from FOR DML to FOR CAPACITY HIGH
