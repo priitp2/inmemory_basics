@@ -124,7 +124,7 @@ type Baz struct {
 
 bz := make([]Baz, size)
 for i = 0; i < size; i++ {
-bz[i] = Baz{i, i, nil}
+   bz[i] = Baz{i, i, nil}
    if i < size - 1 {
       bz[i].next = &bz[i+1]
    }
