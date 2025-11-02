@@ -83,6 +83,10 @@ In context of data analytics, it is not a free lunch. More often than not, data 
 
 # Simplified example
 
+<!--
+Examples are taken from "100 Go Mistakes and How to Avoid Them", by Teiva Harsanyi.
+Chapter 12 has worked examples about cache effects on performance. It is a good book :)
+-->
 ---
 
 ```go
