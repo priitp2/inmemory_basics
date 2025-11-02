@@ -323,6 +323,13 @@ Inline LOBS:
 
 ---
 
+# In-Memory and queries
+
+All referenced columns should be available in in-memory area
+In Oracle 21c: columns can be read from disc during projection
+
+---
+
 ![](img/syntax0.png)
 
 ---
