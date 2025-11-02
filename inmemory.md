@@ -67,19 +67,6 @@ Adapted from Bryant & Hallaron, "Computer Systems: A Programmer's Perspective"
 -->
 
 ---
-
-| Event | Full table scan | In-Memory scan | Difference |
-|-------|-----------------|----------------|---|
-| branch-instructions | 9700928898 | 716348559 | 13x |
-| branch-misses | 123790427 | 30305893 | 4x |
-| cache-misses | 33121710 | 4641178 |  7x |
-| cycles | 31763298910 | 3322369500 | 9.6x |
-| instructions | 65545341739 | 4178971681 | 15x |
-
-
-> Source: https://priitp.wordpress.com/2024/10/16/does-oracle-in-memory-use-simd-instructions-joelkallmanday/
-
----
 # Data-oriented design
 
 Operates on arrays, this avoids call overhead and cache misses
@@ -91,6 +78,75 @@ Tight control on memory allocation
 
 In context of data analytics, it is not a free lunch. More often than not, data has to be turned into CPU-friendly format and that takes an effort.
 -->
+
+---
+
+# Simplified example
+
+---
+
+```go
+type Foo struct {
+        a uint64
+        b uint64
+}
+
+foos := make([]Foo, size)
+
+```
+
+---
+
+```go
+type Bar struct {
+        a []uint64
+        b []uint64
+}
+
+ bars := Bar{}
+ bars.a = make([]uint64, size)
+ bars.b = make([]uint64, size)
+
+```
+
+---
+
+```go
+type Baz struct {
+        a    uint64
+        b    uint64
+        next *Baz
+}
+
+bz := make([]Baz, size)
+for i = 0; i < size; i++ {
+bz[i] = Baz{i, i, nil}
+   if i < size - 1 {
+      bz[i].next = &bz[i+1]
+   }
+}
+```
+
+---
+
+```bash
+[pripii@pripii-roadkill loctest]$ go run .
+Foos:    10000      104366 ns/op
+Bar:    21056        57861 ns/op
+Baz:     5560       213953 ns/op
+```
+---
+
+| Event | Full table scan | In-Memory scan | Difference |
+|-------|-----------------|----------------|---|
+| branch-instructions | 9700928898 | 716348559 | 13x |
+| branch-misses | 123790427 | 30305893 | 4x |
+| cache-misses | 33121710 | 4641178 |  7x |
+| cycles | 31763298910 | 3322369500 | 9.6x |
+| instructions | 65545341739 | 4178971681 | 15x |
+
+
+> Source: https://priitp.wordpress.com/2024/10/16/does-oracle-in-memory-use-simd-instructions-joelkallmanday/
 
 ---
 
