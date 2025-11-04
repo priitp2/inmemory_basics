@@ -96,9 +96,15 @@ type Foo struct {
 }
 
 foos := make([]Foo, size)
-
 ```
 
+---
+
+![bg w:auto h:auto](img/array_of_structs.png)
+
+<!--
+Memory layout is one continuous array, at least 2 structs per cache line.
+-->
 ---
 
 ```go
@@ -112,6 +118,10 @@ type Bar struct {
  bars.b = make([]uint64, size)
 
 ```
+
+---
+
+![](img/struct_of_arrays.png)
 
 ---
 
@@ -133,6 +143,10 @@ for i = 0; i < size; i++ {
 
 ---
 
+![bg w:auto h:auto](img/linked_list.png)
+
+---
+
 ```bash
 [pripii@pripii-roadkill loctest]$ go run .
 Foos:    10000      104366 ns/op
@@ -140,6 +154,11 @@ Bar:    21056        57861 ns/op
 Baz:     5560       213953 ns/op
 ```
 ---
+
+# In case of Oracle In-Memory...
+
+---
+
 
 | Event | Full table scan | In-Memory scan | Difference |
 |-------|-----------------|----------------|---|
