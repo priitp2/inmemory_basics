@@ -8,7 +8,7 @@ paginate: true
 
 # Oracle In-Memory: basics and beyond
 ### Priit Piipuu
-### 14.11.2025
+### 13.11.2025
 
 ---
 
@@ -202,6 +202,19 @@ Dremio: query engine and data warehouse built around Arrow.
 
 ---
 
+# Oracle In-memory and competitors
+||Arrow implementations|Oracle In-Memory|
+|---|---|---|
+|Data types |Has own type system|Subset of SQL types|
+|Access|Constant time random access|Through SQL queries|
+|Transactional|No|Yes|
+|Compute functions| Yes | In-Memory expr|
+|Automatic parallelization|Yes|Yes|
+|Automatic memory management|No/DYI|Yes|
+|Automatic In-Memory|No|Yes|
+
+---
+
 # Oracle In-Memory
 ---
 # Oracle In-Memory (I)
@@ -255,17 +268,6 @@ Because of VECTOR GROUP BY it might be good to set inmemory_size > 0 even if you
 populate any segments to in-memory area.
 -->
 
----
-# Oracle In-memory and competitors
-||Arrow implementations|Oracle In-Memory|
-|---|---|---|
-|Data types |Has own type system|Subset of SQL types|
-|Access|Constant time random access|Through SQL queries|
-|Transactional|No|Yes|
-|Compute functions| Yes | In-Memory expressions|
-|Automatic parallelization|Yes|Yes|
-|Automatic memory management|Not really/depends|Yes|
-|Automatic In-Memory|No|Yes|
 ---
 
 # Populating the column store
@@ -322,7 +324,7 @@ Data types that can't be populated:
 
 In-Memory can be specified either on table level or partition level
 Partitions inherit table-level clause
-Works with hybrid partitioning, but rsults may vary
+Works with hybrid partitioning, but results may vary
 
 ---
 
