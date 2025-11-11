@@ -654,7 +654,7 @@ Easiest to spot in the SQL Monitoring Report
 
 ---
 
-# In-Memory and aggregation
+# Vector aggregation
 
 Uses arrays for joins and aggregation
 Cost-based, used for `GROUP BY`
@@ -770,6 +770,7 @@ Takes effect from `FOR QUERY` compression levels onwards
 As always, IMCUs have to be reloaded for optimized encoding to take effect.
 When enabled, numbers will have two encodings in IMCUs: traditional and optimized, this adds memory overhead.
 -->
+<!--
 ---
 
 
@@ -777,13 +778,15 @@ When enabled, numbers will have two encodings in IMCUs: traditional and optimize
 
 Does TABLE ACCESS IN MEMORY FULL access path mean data comes from the In-Memory?
 
+-->
 <!-- 
 Data might be stale. Segments might not be loaded into In-memory, for example in RAC. Or your query might mix and match columns that are not loaded into In-memory: in that case data will come from the buffer cache. And query optimizer is totally oblivious about what decision are taken during the scan.
 -->
+<!--
 ---
 
 ![](img/inm_stats.png)
-
+-->
 ---
 
 # In-Memory expressions
