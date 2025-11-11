@@ -44,7 +44,7 @@ Oracle Text and JSON support.
 
 # Safe harbour statement
 
-This presentation describes things as they are in Oracle 23ai
+This presentation describes things as they are in Oracle 26ai
 It is tested on Oracle 19c and 21c
 You should always read the latest version of In-Memory docs, even if you're on older version
 
