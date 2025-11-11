@@ -26,11 +26,14 @@ Blog: https://priitp.wordpress.com,
 * A gentle introduction to the in-memory analytics
 * Oracle In-Memory basics
 * What is under the hood?
-* Other cool stuff
+* A quick rundown of more interesting features of Oracle In-Memory
 
 <!-- 
 One reason for this presentation is now there's some buzz around in-memory analytics and
 Apache Arrow in the free software world. At last, Oracle In-Memory might get competitiors.
+
+This presentation touches a subset of In-Memory features. What is excluded is In-Memory for
+Oracle Text and JSON support.
 -->
 ---
 
@@ -708,19 +711,67 @@ on p.id = t.provider_id
 
 ![w:auto h:auto](img/vector_group_by1.png)
 
----
-# Compression
+<!--
 
-Levels from FOR DML to FOR CAPACITY HIGH
-FOR QUERY handles NUMBERs
+Dimensions are processed first: Oracle creates key vectors and temporary tables. After that ORacle scans
+the fact table and aggregates on the go.
+-->
+
+---
+
+```
+<snip>
+               3  key vector dgk batch parcels
+               4  key vector dgk range parcels
+           40580  key vector hash cells scanned
+              22  key vector hash inserts
+           40558  key vector hash probes
+               2  key vector non cas merge operations
+               1  key vector queries
+        31984002  key vector rows processed by value
+               2  key vectors created
+               1  key vectors created (byte wide)
+               1  key vectors created (nibble wide)
+               2  key vectors created (simple layout)
+<snip>
+              96  vector group by accumspace cardinality
+            3072  vector group by accumspace size
+               1  vector group by used
+<snip>
+
+```
+
+<!-- 
+From sqlcl autotrace output.
+Key vectors seem to be cached for the session.
+-->
+
+---
+# Compression and optimized arithmetic
+
+Compression levels from `FOR DML` to `FOR CAPACITY HIGH`
+`FOR QUERY LOW` seems to be using dictionary encoding only,
+`FOR CAPACITY HIGH` uses Zstandard.
 
 <!-- 
 Oracle NUMBER data type is a composite data type and thus not especially CPU friendly. FOR QUERY and better compression levels transform it to something more computable.
 
-FOR QUERY LOW seems to be using dictionary encoding only, FOR CAPACITY HIGH uses Zstandard.
-
 -->
 ---
+
+# Optimized arithmetic
+
+Parameter `INMEMORY_OPTIMIZED_ARITHMETIC`
+Can be `DISABLE` (default) or `ENABLE`
+When enabled, NUMBERs are encoded in CPU friendly format
+Takes effect from `FOR QUERY` compression levels onwards
+
+<!--
+As always, IMCUs have to be reloaded for optimized encoding to take effect.
+When enabled, numbers will have two encodings in IMCUs: traditional and optimized, this adds memory overhead.
+-->
+---
+
 
 # It happens all in runtime
 
