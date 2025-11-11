@@ -90,6 +90,8 @@ Chapter 12 has worked examples about cache effects on performance. It is a good 
 ---
 
 ```go
+var size uint64 = 100_000
+
 type Foo struct {
         a uint64
         b uint64
@@ -200,6 +202,42 @@ Pyarrow (wrapper around the C/C++ library)
 Pola.rs (written in Rust, adds SQL support and other cool features)
 Dremio: query engine and data warehouse built around Arrow.
 
+---
+
+# pyarrow example
+
+```python
+#!/usr/bin/env python3.12
+
+from pyarrow import csv,string,decimal128
+
+FNAME = '/u01/oracle/1brc/measurements.txt'
+tbl = csv.read_csv(FNAME, csv.ReadOptions(column_names = ['city', 'temp']),
+                    csv.ParseOptions(delimiter=';'),
+                    csv.ConvertOptions(column_types={'city':string(),
+                        'temp':decimal128(3, 2)}))
+
+out = (tbl.group_by('city')
+        .aggregate([('temp', 'max'), ('temp', 'min'), ('temp', 'mean')])
+        .sort_by('city'))
+```
+---
+
+# Same query in Oracle SQL
+
+```sql
+SELECT/*+ parallel */
+    city,
+    MIN(temp),
+    AVG(temp),
+    MAX(temp)
+FROM
+    brc_ext
+GROUP BY
+    city
+ORDER BY
+    city;
+```
 ---
 
 # Oracle In-memory and competitors
