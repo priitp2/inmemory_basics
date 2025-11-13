@@ -194,8 +194,9 @@ Protocol for serialisation and generic data transport
 Data adjacency for sequential access
 Constant time random access
 Plays well with SIMD and vectorization
-Zero-copy access
-No compression
+Zero-copy access to data
+Popular as data exchange protocol
+* Even python-oracledb has support for the data frames
 
 ---
 # Implementations
@@ -243,7 +244,7 @@ ORDER BY
 ```
 ---
 
-# Oracle In-memory and competitors
+# Oracle In-Memory and competitors
 ||Arrow implementations|Oracle In-Memory|
 |---|---|---|
 |Data types |Has own type system|Subset of SQL types|
@@ -663,7 +664,7 @@ Main benefit: allows vector joins and group by operations while scanning the fac
 
 ---
 
-# KEY VECTOR and VECTOR GROUP BY (I)
+# KEY VECTOR and VECTOR GROUP BY 
 
 `INMEMORY_SIZE` must be set to non-zero value
 Tables do not have to be populated to the IM store (!)
@@ -672,15 +673,9 @@ Key vectors are conceptually similar to the Bloom filters
 
 ---
 
-# KEY VECTOR and VECTOR GROUP BY: some limitations
-
-Does not benefit joins between large tables
-Dimension has more than 2bn rows
-
----
-
 # KEY VECTOR and VECTOR GROUP BY: some conditions
 
+Joins between large tables do not benefit from key vectors
 Query joins the fact table with one or more dimensions
 Multiple fact tables joined by same dimension also supported
 
