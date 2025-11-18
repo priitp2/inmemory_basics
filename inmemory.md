@@ -8,7 +8,7 @@ paginate: true
 
 # Oracle In-Memory: basics and beyond
 ### Priit Piipuu
-### 13.11.2025
+### 18.11.2025
 
 ---
 
@@ -23,10 +23,10 @@ Blog: https://priitp.wordpress.com,
 ---
 # What it's all about
 
-* A gentle introduction to the in-memory analytics
-* Oracle In-Memory basics
-* What is under the hood?
-* A quick rundown of more interesting features of Oracle In-Memory
+A gentle introduction to the in-memory analytics
+Oracle In-Memory basics
+What is under the hood?
+A quick rundown of more interesting features of Oracle In-Memory
 
 <!-- 
 One reason for this presentation is now there's some buzz around in-memory analytics and
@@ -192,9 +192,8 @@ Protocol for serialisation and generic data transport
 # Arrow columnar format
 
 Data adjacency for sequential access
-Constant time random access
+Constant time, zero copy random access
 Plays well with SIMD and vectorization
-Zero-copy access to data
 Popular as data exchange protocol
 * Even python-oracledb has support for the data frames
 
@@ -338,8 +337,6 @@ Tables
 Matrialized views
 Set of columns
 
-```sql
-```
 ---
 
 # `INMEMORY` attribute
@@ -885,8 +882,6 @@ If the document is larger than 32k, query accesses the row store.
 <!--
 `INMEMORY_EXPRESSION_USAGE = ENABLE` allows materialization of dynamic expression, `INMEMORY_VIRTUAL_COLUMNS = ENABLE` allows population of all virtual columns. 
 -->
-
----
 
 ---
 
